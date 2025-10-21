@@ -8,4 +8,4 @@ const router = express.Router();
 router.get("/", testingController);
 
 //export
-module.exports = router;
+export default router
