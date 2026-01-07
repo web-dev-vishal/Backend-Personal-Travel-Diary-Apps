@@ -5,10 +5,8 @@ import cookieParser from "cookie-parser"
 import path from "path"
 import cors from "cors"
 
-import testRouter from "./routes/testRouter.js"
 import authRoutes from "./routes/auth.route.js"
 import userRoutes from "./routes/user.route.js"
-import travelStoryRoutes from "./routes/travelStory.route.js"
 import { fileURLToPath } from "url"
 
 dotenv.config()
@@ -24,45 +22,30 @@ mongoose
 
 const app = express()
 
-// Enable CORS for frontend (Replace with your frontend URL)
-app.use(
-  cors({
-    origin: "http://localhost:5173", //frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow CRUD operations
-    credentials: true, // Allow cookies & authorization headers
-  })
-)
-
 app.use(cookieParser())
 
 // for allowing json object in req body
 app.use(express.json())
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000!")
-})
-
-app.use("/api/test", testRouter)
-app.use("/api/auth", authRoutes)
-app.use("/api/user", userRoutes)
-router.get("/", testingController);
-
-// server static files from the uploads and assets directory
+// Server static files from the uploads and assets directory (MOVED BEFORE ROUTES)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")))
-
 app.use("/assets", express.static(path.join(__dirname, "assets")))
 
-// Add your testing route here
+// Welcome route - should be at the top
 app.get("/", (req, res) => {
   res.status(200).send("<h1>Welcome to the backend server of the personal travel app</h1>");
 });
 
+// API Routes
+app.use("/api/auth", authRoutes)
+app.use("/api/user", userRoutes)
+
+// Error handling middleware (MUST BE LAST)
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500
-
   const message = err.message || "Internal Server Error"
 
   res.status(statusCode).json({
@@ -70,4 +53,17 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   })
+})
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected to MongoDB ✅");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error ❌", error);
+  });
+
+// Start server (MOVED TO END)
+app.listen(3000, () => {
+  console.log("Server is running on port 3000!")
 })
