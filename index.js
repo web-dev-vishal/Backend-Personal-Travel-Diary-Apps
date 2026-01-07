@@ -45,7 +45,7 @@ app.listen(3000, () => {
 app.use("/api/test", testRouter)
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
-app.use("/api/travel-story", travelStoryRoutes)
+router.get("/", testingController);
 
 // server static files from the uploads and assets directory
 const __filename = fileURLToPath(import.meta.url)
