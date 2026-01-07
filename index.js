@@ -55,6 +55,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
 app.use("/assets", express.static(path.join(__dirname, "assets")))
 
+// Add your testing route here
+app.get("/", (req, res) => {
+  res.status(200).send("<h1>Welcome to the backend server of the personal travel app</h1>");
+});
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500
 
